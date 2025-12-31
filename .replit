@@ -1,0 +1,15 @@
+run = "python run.py"
+entrypoint = "run.py"
+
+hidden = [".pythonlibs"]
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+run = ["python", "run.py"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8501
+externalPort = 80
