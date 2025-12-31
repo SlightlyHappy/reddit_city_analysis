@@ -11,10 +11,17 @@ load_dotenv()
 class Config:
     """Application configuration."""
     
-    # Reddit API Credentials
-    REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID', 'kod8hJSg7KC9OTKrt-MZHg')
-    REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET', 'aXiMxvChpvJIM_4KLna0-Fx3oe9hKw')
-    REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT', 'BS/1.0 (by /u/Mobile-Trainer3722)')
+    # Reddit API Credentials - MUST be set via environment variables
+    REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
+    REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
+    REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT', 'RedditAnalysisBot/1.0')
+    
+    # Validate credentials
+    if not REDDIT_CLIENT_ID or not REDDIT_CLIENT_SECRET:
+        raise ValueError(
+            "Missing Reddit API credentials! "
+            "Set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET environment variables."
+        )
     
     # City Subreddit Mappings
     CITIES = {

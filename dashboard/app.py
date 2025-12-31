@@ -3,6 +3,15 @@ Streamlit dashboard for Reddit sentiment analysis.
 Run with: streamlit run dashboard/app.py
 """
 import streamlit as st
+
+# Page config MUST be first Streamlit command
+st.set_page_config(
+    page_title="Multi-City Reddit Sentiment Analysis",
+    page_icon="🌍",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
@@ -40,7 +49,10 @@ def start_background_scheduler():
         
         logger.info(f"Starting background scheduler (every {interval_hours} hours)...")
         scheduler = DataCollectionScheduler(interval_hours=interval_hours)
-        scheduler.start()
+        
+        # Start without immediate collection to avoid blocking UI
+        # First collection will happen in 1 minute
+        scheduler.start(run_immediately=False)
         logger.info("✓ Background scheduler started successfully")
         
         return scheduler
@@ -49,19 +61,18 @@ def start_background_scheduler():
         return None
 
 
-# Start the background scheduler (only runs once due to cache_resource)
-scheduler = start_background_scheduler()
-
-# Page config
-st.set_page_config(
-    page_title="Multi-City Reddit Sentiment Analysis",
-    page_icon="🌍",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 # Initialize database
 db = DatabaseHandler()
+
+# Start the background scheduler (only runs once due to cache_resource)
+# This runs in background and doesn't block UI rendering
+try:
+    scheduler = start_background_scheduler()
+    if scheduler:
+        st.sidebar.success("🔄 Auto-update enabled")
+        st.sidebar.info("⏱️ First collection in ~1 min, then every 6h")
+except Exception as e:
+    st.sidebar.warning(f"⚠️ Auto-update disabled: {str(e)}")
 
 # Custom CSS
 st.markdown("""

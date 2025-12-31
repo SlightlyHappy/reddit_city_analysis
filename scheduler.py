@@ -83,11 +83,23 @@ class DataCollectionScheduler:
         logger.info(f"Collection complete: {total_posts} posts, {total_comments} comments")
         logger.info("=" * 60)
     
-    def start(self):
-        """Start the scheduler."""
-        # Run immediately on start
+    def start(self, run_immediately=False):
+        """Start the scheduler.
+        
+        Args:
+            run_immediately: If True, runs first collection synchronously (blocks).
+                           If False, schedules first run for 1 minute from now.
+        """
         logger.info(f"Starting scheduler - will collect data every {self.interval_hours} hours")
-        self.collect_data()
+        
+        if run_immediately:
+            # Run first collection synchronously (blocks UI)
+            self.collect_data()
+        else:
+            # Schedule first collection for 1 minute from now (non-blocking)
+            from datetime import datetime, timedelta
+            first_run = datetime.now() + timedelta(minutes=1)
+            logger.info(f"First data collection scheduled for {first_run.strftime('%H:%M:%S')}")
         
         # Schedule periodic collection
         self.scheduler.add_job(
@@ -95,7 +107,8 @@ class DataCollectionScheduler:
             'interval',
             hours=self.interval_hours,
             id='data_collection',
-            replace_existing=True
+            replace_existing=True,
+            next_run_time=None if run_immediately else first_run
         )
         
         self.scheduler.start()
