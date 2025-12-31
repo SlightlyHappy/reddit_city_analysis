@@ -11,6 +11,7 @@ import sys
 import os
 import re
 from collections import Counter
+import logging
 
 try:
     from wordcloud import WordCloud
@@ -22,6 +23,34 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from database.db_handler import DatabaseHandler
 from config.config import Config
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@st.cache_resource
+def start_background_scheduler():
+    """Start background data collection scheduler (runs once per app instance)."""
+    try:
+        from scheduler import DataCollectionScheduler
+        
+        # Get interval from environment or default to 6 hours
+        interval_hours = int(os.getenv('COLLECTION_INTERVAL_HOURS', '6'))
+        
+        logger.info(f"Starting background scheduler (every {interval_hours} hours)...")
+        scheduler = DataCollectionScheduler(interval_hours=interval_hours)
+        scheduler.start()
+        logger.info("✓ Background scheduler started successfully")
+        
+        return scheduler
+    except Exception as e:
+        logger.error(f"Failed to start scheduler: {str(e)}")
+        return None
+
+
+# Start the background scheduler (only runs once due to cache_resource)
+scheduler = start_background_scheduler()
 
 # Page config
 st.set_page_config(

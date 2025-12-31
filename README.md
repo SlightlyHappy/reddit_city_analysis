@@ -1,53 +1,72 @@
-# Reddit Sentiment Analysis Dashboard
+# Reddit City Sentiment Analysis Dashboard
 
-A real-time sentiment analysis dashboard for Reddit posts from city subreddits. Currently configured for **r/gurgaon**.
+A real-time sentiment analysis dashboard comparing Reddit sentiment across multiple cities worldwide.
 
-## Features
+## 🌍 Cities Tracked
 
-- 📥 Fetch posts from Reddit using PRAW
+- **Gurgaon** (r/gurgaon)
+- **New York** (r/nyc)  
+- **Paris** (r/paris)
+- **Delhi** (r/delhi)
+- **Tokyo** (r/tokyo)
+
+## ✨ Features
+
+- 📥 Automated data collection from multiple city subreddits
 - 🧠 Sentiment analysis using VADER (optimized for social media)
-- 💾 SQLite database for storage
-- 📊 Interactive Streamlit dashboard with visualizations
-- 📈 Track sentiment over time
-- 🔍 View top positive, negative, and popular posts
+- 💬 Comment analysis with up to 50 comments per post
+- 📊 Interactive Streamlit dashboard with rich visualizations
+- 🏙️ Multi-city comparison and rankings
+- ☁️ Word clouds and keyword extraction
+- 📈 Historical trends and engagement metrics
+- 🔄 Background scheduler for automatic updates every 6 hours
+- 💾 SQLite database for persistent storage
 
-## Setup
+## 🚀 Quick Start
 
-### 1. Install Dependencies
+### For Streamlit Cloud (Recommended)
+
+1. **Fork this repository**
+2. **Deploy to Streamlit Cloud:**
+   - Go to https://share.streamlit.io
+   - Click "New app"
+   - Select this repository
+   - Main file: `dashboard/app.py`
+   - Click "Deploy"!
+
+The app will automatically:
+- Collect initial data from all cities
+- Start background scheduler for updates every 6 hours
+- Display live dashboard
+
+### For Local Development
+
+#### 1. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure Credentials (Optional)
+#### 2. Run the Application
 
-The Reddit API credentials are already configured in `config/config.py` using the credentials from `apicreds.md`.
-
-If you want to use environment variables instead, create a `.env` file:
-
+**Option A - Unified App (Recommended):**
 ```bash
-cp .env.example .env
+streamlit run dashboard/app.py
 ```
 
-Then edit `.env` with your credentials (though they're already set in the code).
+This automatically starts:
+- Background data collection scheduler
+- Interactive dashboard
+- Updates every 6 hours
 
-### 3. Run Data Collection
-
-Fetch posts and analyze sentiment:
-
+**Option B - Manual Collection:**
 ```bash
-python main.py
+# Collect data once
+python collect_cities.py
+
+# Then run dashboard
+streamlit run dashboard/app.py
 ```
-
-This will:
-- Connect to Reddit API
-- Fetch posts from r/gurgaon
-- Analyze sentiment using VADER
-- Store results in SQLite database (`reddit_analysis.db`)
-
-### 4. Launch Dashboard
-
-View the interactive dashboard:
 
 ```bash
 streamlit run dashboard/app.py

@@ -1,5 +1,5 @@
-run = "python run.py"
-entrypoint = "run.py"
+run = "streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0"
+entrypoint = "dashboard/app.py"
 
 hidden = [".pythonlibs"]
 
@@ -7,7 +7,7 @@ hidden = [".pythonlibs"]
 channel = "stable-23_11"
 
 [deployment]
-run = ["python", "run.py"]
+run = ["streamlit", "run", "dashboard/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
